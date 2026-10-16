@@ -4,40 +4,272 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ジュウシマツ発声 試聴ページ</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Noto+Sans+JP:wght@400;500;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
   <style>
+    :root {
+      --bg: #FFF7EB;
+      --surface: #ffffff;
+      --text: #1f1a14;
+      --muted: #7a6f62;
+      --line: #eadfce;
+      --accent: #0f766e;
+      --accent-2: #b45309;
+      --track: #f1e8da;
+    }
+
+    * { box-sizing: border-box; }
+
     body {
-      font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Noto Sans JP", sans-serif;
-      max-width: 800px;
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: "Inter", "Noto Sans JP", sans-serif;
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .wrap {
+      max-width: 880px;
       margin: 0 auto;
-      padding: 24px 16px;
-      line-height: 1.6;
-      color: #222;
+      padding: 72px 16px 96px;
+    }
+
+    header { margin-bottom: 56px; }
+
+    .eyebrow {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.75rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin: 0 0 12px;
+    }
+
+    h1 {
+      font-size: clamp(1.8rem, 5vw, 2.6rem);
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      line-height: 1.25;
+      margin: 0 0 16px;
+    }
+
+    .lead { color: var(--muted); margin: 0; }
+
+    h2 {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      margin: 0 0 20px;
+    }
+    h2::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: var(--line);
+    }
+
+    section + section { margin-top: 64px; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 22px 22px 20px;
+      transition: border-color .2s, transform .2s;
+    }
+    .card:hover { border-color: var(--c); transform: translateY(-2px); }
+    .card.bird  { --c: var(--accent-2); }
+    .card.model { --c: var(--accent); }
+
+    .tag {
+      display: inline-block;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--c);
+      border: 1px solid currentColor;
+      border-radius: 999px;
+      padding: 2px 10px;
+      margin-bottom: 12px;
+    }
+
+    .card h3 { font-size: 1.1rem; font-weight: 600; margin: 0 0 2px; }
+    .file {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin: 0 0 20px;
+      word-break: break-all;
+    }
+
+    /* プレイヤー */
+    .player { display: flex; align-items: center; gap: 14px; }
+
+    .play {
+      flex: none;
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      border: none;
+      background: var(--c);
+      color: var(--surface);
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      transition: transform .15s;
+    }
+    .play:hover { transform: scale(1.06); }
+    .play:focus-visible { outline: 2px solid var(--c); outline-offset: 3px; }
+    .play svg { width: 18px; height: 18px; fill: currentColor; }
+    .play .i-pause { display: none; }
+    .player.playing .i-play  { display: none; }
+    .player.playing .i-pause { display: block; }
+
+    .bar { flex: 1; min-width: 0; }
+    .track {
+      position: relative;
+      height: 6px;
+      background: var(--track);
+      border-radius: 999px;
+      cursor: pointer;
+    }
+    .fill {
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: 0;
+      background: var(--c);
+      border-radius: inherit;
+    }
+    .time {
+      display: flex;
+      justify-content: space-between;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.7rem;
+      color: var(--muted);
+      margin-top: 8px;
+    }
+
+    figure {
+      margin: 0;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 16px;
+    }
+    figure img {
+      display: block;
+      width: 100%;
+      height: auto;
+      border-radius: 8px;
       background: #fff;
     }
-    h1 { font-size: 1.5rem; border-bottom: 1px solid #ccc; padding-bottom: 8px; }
-    h2 { font-size: 1.2rem; margin-top: 40px; }
-    .sample { margin: 16px 0 24px; }
-    .sample h3 { font-size: 1rem; margin: 0 0 8px; }
-    audio { width: 100%; }
-    img { max-width: 100%; height: auto; border: 1px solid #ddd; }
+
+    footer {
+      margin-top: 80px;
+      font-size: 0.75rem;
+      color: var(--muted);
+      text-align: center;
+    }
   </style>
 </head>
 <body>
-  <h1>ジュウシマツ発声 試聴ページ</h1>
+  <div class="wrap">
+    <header>
+      <p class="eyebrow">Trial Listening</p>
+      <h1>ジュウシマツの発声と<br>モデルの発声</h1>
+      <p class="lead">実際のジュウシマツの歌と、モデルが生成した発声を聴き比べてください。</p>
+    </header>
 
-  <h2>音声の視聴</h2>
+    <section>
+      <h2>音声の視聴</h2>
+      <div class="grid">
+        <div class="card bird">
+          <span class="tag">Target</span>
+          <h3>ジュウシマツの発声</h3>
+          <p class="file">2026-10-01_target.wav</p>
+          <div class="player" data-src="2026-10-01_target.wav"></div>
+        </div>
 
-  <div class="sample">
-    <h3>ジュウシマツの発声</h3>
-    <audio controls preload="metadata" src="2026-10-01_target.wav"></audio>
+        <div class="card model">
+          <span class="tag">Model</span>
+          <h3>モデルの発声</h3>
+          <p class="file">2026-10-16_model_vocal.wav</p>
+          <div class="player" data-src="2026-10-16_model_vocal.wav"></div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>スペクトログラムでの比較</h2>
+      <figure>
+        <img src="image-1792134336660.png" alt="ジュウシマツの発声とモデルの発声のスペクトログラム比較">
+      </figure>
+    </section>
+
+    <footer>openlab trial listening</footer>
   </div>
 
-  <div class="sample">
-    <h3>モデルの発声</h3>
-    <audio controls preload="metadata" src="2026-10-16_model_vocal.wav"></audio>
-  </div>
+  <script>
+    const fmt = s => isFinite(s) ? `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}` : "0:00";
+    const players = [];
 
-  <h2>スペクトログラムでの比較</h2>
-  <img src="image-1792134336660.png" alt="ジュウシマツの発声とモデルの発声のスペクトログラム比較">
+    document.querySelectorAll(".player").forEach(el => {
+      el.innerHTML = `
+        <button class="play" aria-label="再生">
+          <svg class="i-play" viewBox="0 0 24 24"><path d="M7 4.5v15l13-7.5z"/></svg>
+          <svg class="i-pause" viewBox="0 0 24 24"><path d="M6 4h4v16H6zM14 4h4v16h-4z"/></svg>
+        </button>
+        <div class="bar">
+          <div class="track"><div class="fill"></div></div>
+          <div class="time"><span class="cur">0:00</span><span class="dur">0:00</span></div>
+        </div>`;
+
+      const audio = new Audio(el.dataset.src);
+      audio.preload = "metadata";
+      players.push(audio);
+
+      const btn = el.querySelector(".play");
+      const track = el.querySelector(".track");
+      const fill = el.querySelector(".fill");
+      const cur = el.querySelector(".cur");
+      const dur = el.querySelector(".dur");
+
+      btn.addEventListener("click", () => {
+        if (audio.paused) {
+          players.forEach(a => a !== audio && a.pause());
+          audio.play();
+        } else {
+          audio.pause();
+        }
+      });
+
+      audio.addEventListener("play",  () => { el.classList.add("playing");    btn.setAttribute("aria-label", "一時停止"); });
+      audio.addEventListener("pause", () => { el.classList.remove("playing"); btn.setAttribute("aria-label", "再生"); });
+      audio.addEventListener("ended", () => { audio.currentTime = 0; });
+      audio.addEventListener("loadedmetadata", () => { dur.textContent = fmt(audio.duration); });
+      audio.addEventListener("timeupdate", () => {
+        cur.textContent = fmt(audio.currentTime);
+        fill.style.width = audio.duration ? `${audio.currentTime / audio.duration * 100}%` : "0";
+      });
+
+      track.addEventListener("click", e => {
+        if (!audio.duration) return;
+        const r = track.getBoundingClientRect();
+        audio.currentTime = (e.clientX - r.left) / r.width * audio.duration;
+      });
+    });
+  </script>
 </body>
 </html>
